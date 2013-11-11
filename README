@@ -1,0 +1,51 @@
+--------------------
+Airavat Version 0.1
+--------------------
+
+For Licensing information, see LICENSE.
+For contributor list, see AUTHORS.
+
+-----------------------------
+Getting Started with Airavat
+----------------------------
+
+This is a pre-alpha release of Airavat.
+
+Airavat is a new system that enables privacy preserving MapReduce computations.
+It combines mandatory access control restrictions with 'differential
+privacy' to guarantee end-to-end security even when the mappers are untrusted.
+
+More details can be found in our NSDI'10 paper 
+"Airavat: Security and Privacy for MapReduce".
+
+The current distribution consists of two patches and related files:
+
+1)airavat-hadoop.patch : The patch has been tested on Hadoop-0.19.0
+2)airavat-jikes.patch : The patch has been tested on Jikes 3.0.0
+3)AiravatJvmTest.java : Simple tests of Airavat JVM enforcement 
+4)MapperWrapper.java, MapperInterface.java, SumReducer.java: Wrapper
+class for untrusted mappers, interface that should be implemented by mappers
+and sample reducer
+5)selinux/ : Directory with Airavat's SELinux policy files. Tested on Fedora 10.
+
+-------------
+Compilation:
+-------------
+
+1) For Hadoop: Download hadoop-0.19.0 and apply airavat-hadoop.patch
+   The build process is identical to that of Hadoop.
+   Use the newly created jar  build/airavat-streaming.jar
+
+2) For Airavat JVM: Download Jikes 3.0.0 and apply airavat-jikes.patch
+   Use a configuration file with the suffix "_airavat" (e.g. -Dconfig.name=FastAdaptiveGenMS_airavat)
+   The build process is identical to that of Jikes RVM.
+
+3) For SELinux: Install Fedora 10 and enable SELinux
+  o To install Airavat's policy run: $./airavat.sh
+  o Create the airavatuser and copy the file airavatuser 
+    to /etc/selinux/targeted/contexts/users/
+
+4) Here is sample command to run a MapReduce job in Airavat:
+
+$bin/hadoop jar build/airavat-streaming.jar -mapper "jikes-3.0.0/dist/FastAdaptiveGenMS_airavat_ia32-linux/rvm
+ -cp [<Everything useful>]:. MapperWrapper YourMapper" -hadoopPath "hadoop-0.19.0/bin/hadoop" -tempDirPath "temp" -reducer "java -cp [<Everything useful>]:. SumReducer 0 1 0.1" -numReduceTasks 1 -input in.txt -output out.txt
