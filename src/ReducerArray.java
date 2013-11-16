@@ -15,7 +15,7 @@ public class ReducerArray {
     content.add((double)num);
   }
 
-  public ReducerArray(ArrayList<Double> arr) {
+  public ReducerArray(List<Double> arr) {
     for(Double d: arr) {
     	content.add(d);
     }
@@ -109,6 +109,14 @@ public class ReducerArray {
 //    }
 //  }
   
+  	public ReducerArray sort(boolean isDesc) {
+  		Collections.sort(content);
+  		if(isDesc) {
+  			Collections.reverse(content);
+  		}
+  		return new ReducerArray(content);
+  		
+  	}
   
   	public String toString() {
   		StringBuilder sb = new StringBuilder();
@@ -117,5 +125,15 @@ public class ReducerArray {
   			sb.append("\t");
   		}
   		return sb.toString();
+  	}
+  	
+  	public ReducerArray sum() {
+  		double sum=0.0;
+  		for(double val:content) {
+  			sum+=val;
+  		}
+  		
+  		ReducerArray result = new ReducerArray(sum);
+  		return result;
   	}
 }

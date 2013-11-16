@@ -47,6 +47,7 @@ public class Simulator {
 		String dest = ins.getDest();
 		List<String> srcs =ins.getSrcs();
 		String arg = ins.getArg();
+		ReducerArray result;
 		
 		switch(opc) {
 		case MAX:
@@ -59,12 +60,21 @@ public class Simulator {
 				}
 			}
 			
-			ReducerArray result = symTable.get(srcs.get(0)).max(num);
+			result = symTable.get(srcs.get(0)).max(num);
 			symTable.put(dest, result);
 			break;
 		case OUTPUT:
 			ReducerArray out = symTable.get(dest);
 			System.out.println(out.toString());
+			break;
+		case SORT:
+			boolean isDesc = ins.isDesc();
+			result = symTable.get(srcs.get(0)).sort(isDesc);
+			symTable.put(dest, result);
+			break;
+		case SUM:
+			result = symTable.get(srcs.get(0)).sum();
+			symTable.put(dest, result);
 			break;
 		}
 		
