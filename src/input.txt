@@ -1,0 +1,2 @@
+max A input 3
+output A
