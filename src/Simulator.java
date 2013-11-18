@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class Simulator {
+public class Simulator implements ReducerInterface<Double> {
 	static Map<String, ReducerArray> symTable = new HashMap<String,ReducerArray>();
 	/**
 	 * @param args
@@ -76,6 +76,7 @@ public class Simulator {
 			break;
 		case OUTPUT:
 			ReducerArray out = symTable.get(dest);
+			symTable.put("output", out);
 			System.out.println(out.toString());
 			break;
 		case SORT:
@@ -183,10 +184,42 @@ public class Simulator {
 			}
 			result = ReducerArray.copy(sources);
 			symTable.put(dest, result);
+			break;
 			
 		}
 		
 		
 	}
 
+	
+	public ReducerArray reduce(ReducerArray ra) throws FileNotFoundException {
+		symTable.put("input", ra);
+		List<Instruction> instructions  = new ArrayList<Instruction>();
+		
+		BufferedReader br = new BufferedReader(new FileReader("input.txt"));
+		
+		try {
+			String line = br.readLine();
+			while(line!=null) {
+				instructions.add(new Instruction(line));
+				line = br.readLine();
+			}
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		for(Instruction ins: instructions) {
+			exec(ins);
+		}
+		return symTable.get("output");
+	}
+	
+	@Override
+	public List<Double> reduce(List<Double> in) {
+		
+		ReducerArray ra = new ReducerArray(in);
+		return reduce(ra).content;
+	}
 }
