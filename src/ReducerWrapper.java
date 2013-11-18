@@ -18,13 +18,16 @@ public class ReducerWrapper {
     double epsilon = 0;
     double min = 0, max = 0, avg = 0, b = 0;
     String reducerClassName = "";
-    if (args.length == 4) {
+    String filename = "";
+    if (args.length >= 4) {
       reducerClassName = args[0];
       min = Double.parseDouble(args[1]);
       max = Double.parseDouble(args[2]);
       avg = (max-min)/2;
       b = Math.max(Math.abs(min), Math.abs(max));
       epsilon = Double.parseDouble(args[3]);
+      if (args.length > 4) filename = args[4];
+      else filename = "input.txt";
     } else {
       System.out.println("Error: Usage: ReducerWrapper <ReducerClassName> <min> <max> <epsilon>");
       System.exit(0);
@@ -56,7 +59,7 @@ public class ReducerWrapper {
         if (!newKey.equals(oldKey)) {
           // all points of the previous key are processed
           if (oldKey != null) {
-            printResult(realReducer, targetArray, b, epsilon);
+            printResult(realReducer, targetArray, b, epsilon, filename);
           }
           oldKey = newKey;
           // sum = 0;
@@ -69,7 +72,7 @@ public class ReducerWrapper {
       // print out the last key as well
       if (oldKey != null) {
         //addnoise for privacy
-        printResult(realReducer, targetArray, b, epsilon);
+        printResult(realReducer, targetArray, b, epsilon, filename);
       }
     } catch (IOException e) {
     } catch (Exception e) {
@@ -77,7 +80,9 @@ public class ReducerWrapper {
     
   }
 
-  static void printResult(ReducerInterface realReducer, List<Double> targetArray, double b, double epsilon) {
+  static void printResult(ReducerInterface realReducer, List<Double> targetArray, double b, double epsilon, String filename) {
+    realReducer.filename = filename;
+    realReducer.epsilon = epsilon;
     List<Double> result = realReducer.reduce(targetArray);
     for (int i = 0; i < result.size(); i++) {
       result.set(i, result.get(i) + getNoise(b, epsilon));

@@ -2,6 +2,7 @@ import java.util.*;
 
 public class ReducerArray {
   public List<Double> content = new ArrayList<Double>();
+  double epsilon = 0.0;
 
   public ReducerArray() {
 	  //default constructor.
