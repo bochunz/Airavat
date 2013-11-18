@@ -7,70 +7,69 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 public class Simulator implements ReducerInterface<Double> {
-	static Map<String, ReducerArray> symTable = new HashMap<String,ReducerArray>();
+	static Map<String, ReducerArray> symTable = new HashMap<String, ReducerArray>();
+
 	/**
 	 * @param args
-	 * @throws FileNotFoundException 
+	 * @throws FileNotFoundException
 	 */
 	public static void main(String[] args) throws FileNotFoundException {
-		double input[] = {3.1,2.3,5.4,4.5,8.9,12.7};
-		
+		double input[] = { 3.1, 2.3, 5.4, 4.5, 8.9, 12.7 };
+
 		ReducerArray in = new ReducerArray(input);
 		symTable.put("input", in);
-		List<Instruction> instructions  = new ArrayList<Instruction>();
-		
+		List<Instruction> instructions = new ArrayList<Instruction>();
+
 		BufferedReader br = new BufferedReader(new FileReader("input.txt"));
-		
+
 		try {
 			String line = br.readLine();
-			while(line!=null) {
+			while (line != null) {
 				instructions.add(new Instruction(line));
 				line = br.readLine();
 			}
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		for(Instruction ins: instructions) {
+
+		for (Instruction ins : instructions) {
 			exec(ins);
 		}
-		
-		
+
 	}
-	
+
 	private static void exec(Instruction ins) {
 		Opcode opc = ins.getOpcode();
 		String dest = ins.getDest();
-		List<String> srcs =ins.getSrcs();
+		List<String> srcs = ins.getSrcs();
 		String arg = ins.getArg();
 		ReducerArray result;
-		int num=1;
-		
-		switch(opc) {
+		int num = 1;
+
+		switch (opc) {
 		case MIN:
-			if(arg!=null) {
+			if (arg != null) {
 				try {
 					num = Integer.parseInt(arg);
-				}catch(NumberFormatException e){
-					num = (int)(double)symTable.get(arg).get(0);
+				} catch (NumberFormatException e) {
+					num = (int) (double) symTable.get(arg).get(0);
 				}
 			}
 			result = symTable.get(srcs.get(0)).max(num);
 			symTable.put(dest, result);
 			break;
 		case MAX:
-			if(arg!=null) {
+			if (arg != null) {
 				try {
 					num = Integer.parseInt(arg);
-				}catch(NumberFormatException e){
-					num = (int)(double)symTable.get(arg).get(0);
+				} catch (NumberFormatException e) {
+					num = (int) (double) symTable.get(arg).get(0);
 				}
 			}
-			
+
 			result = symTable.get(srcs.get(0)).max(num);
 			symTable.put(dest, result);
 			break;
@@ -99,9 +98,9 @@ public class Simulator implements ReducerInterface<Double> {
 			try {
 				double add2 = Double.parseDouble(srcs.get(1));
 				result = add1.add(add2);
-			}catch(NumberFormatException e) {
+			} catch (NumberFormatException e) {
 				ReducerArray add2 = symTable.get(srcs.get(1));
-				if(add1.size()!=add2.size() && add2.size()!=1) {
+				if (add1.size() != add2.size() && add2.size() != 1) {
 					System.err.println("length 2nd operand of add is wrong.");
 				}
 				result = add1.add(add2);
@@ -113,12 +112,12 @@ public class Simulator implements ReducerInterface<Double> {
 			try {
 				double sub2 = Double.parseDouble(srcs.get(1));
 				result = sub1.sub(sub2);
-			}catch(NumberFormatException e) {
+			} catch (NumberFormatException e) {
 				ReducerArray sub2 = symTable.get(srcs.get(1));
-				if(sub1.size()!=sub2.size() && sub2.size()!=1) {
+				if (sub1.size() != sub2.size() && sub2.size() != 1) {
 					System.err.println("length 2nd operand of add is wrong.");
 				}
-				result = add1.sub(sub2);
+				result = sub1.sub(sub2);
 			}
 			symTable.put(dest, result);
 			break;
@@ -135,9 +134,9 @@ public class Simulator implements ReducerInterface<Double> {
 			try {
 				double op2 = Double.parseDouble(srcs.get(1));
 				result = op1.mult(op2);
-			}catch(NumberFormatException e) {
+			} catch (NumberFormatException e) {
 				ReducerArray op2 = symTable.get(srcs.get(1));
-				if(op1.size()!=op2.size() && op2.size()!=1) {
+				if (op1.size() != op2.size() && op2.size() != 1) {
 					System.err.println("length 2nd operand of add is wrong.");
 				}
 				result = op1.mult(op2);
@@ -149,9 +148,9 @@ public class Simulator implements ReducerInterface<Double> {
 			try {
 				double op2 = Double.parseDouble(srcs.get(1));
 				result = op1.div(op2);
-			}catch(NumberFormatException e) {
+			} catch (NumberFormatException e) {
 				ReducerArray op2 = symTable.get(srcs.get(1));
-				if(op1.size()!=op2.size() && op2.size()!=1) {
+				if (op1.size() != op2.size() && op2.size() != 1) {
 					System.err.println("length 2nd operand of add is wrong.");
 				}
 				result = op1.div(op2);
@@ -172,53 +171,45 @@ public class Simulator implements ReducerInterface<Double> {
 			symTable.put(dest, result);
 			break;
 		case FILTER:
-			List<String> comparator =ins.getComparator();
+			List<String> comparator = ins.getComparator();
 			List<Double> comparand = ins.getComparand();
-			
-			result = symTable.get(srcs.get(0)).filter(comparator,comparand);
+
+			result = symTable.get(srcs.get(0)).filter(comparator, comparand);
 			symTable.put(dest, result);
 		case COPY:
 			ReducerArray sources[] = new ReducerArray[srcs.size()];
-			for(int i=0;i<srcs.size();i++) {
+			for (int i = 0; i < srcs.size(); i++) {
 				sources[i] = symTable.get(srcs.get(i));
 			}
 			result = ReducerArray.copy(sources);
 			symTable.put(dest, result);
 			break;
-			
 		}
-		
-		
 	}
 
-	
-	public ReducerArray reduce(ReducerArray ra) throws FileNotFoundException {
+	public ReducerArray reduce(ReducerArray ra) {
 		symTable.put("input", ra);
-		List<Instruction> instructions  = new ArrayList<Instruction>();
-		
-		BufferedReader br = new BufferedReader(new FileReader("input.txt"));
-		
+		List<Instruction> instructions = new ArrayList<Instruction>();
 		try {
+			BufferedReader br = new BufferedReader(new FileReader("input.txt"));
 			String line = br.readLine();
-			while(line!=null) {
+			while (line != null) {
 				instructions.add(new Instruction(line));
 				line = br.readLine();
 			}
-			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		for(Instruction ins: instructions) {
+
+		for (Instruction ins : instructions) {
 			exec(ins);
 		}
 		return symTable.get("output");
 	}
-	
+
 	@Override
 	public List<Double> reduce(List<Double> in) {
-		
 		ReducerArray ra = new ReducerArray(in);
 		return reduce(ra).content;
 	}
