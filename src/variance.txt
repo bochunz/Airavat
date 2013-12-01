@@ -1,0 +1,5 @@
+count num input
+power sq input 2
+sum sqsum sq
+div o sqsum num
+output o
