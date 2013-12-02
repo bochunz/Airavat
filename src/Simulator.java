@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Simulator implements ReducerInterface<Double> {
+public class Simulator extends ReducerInterface<Double> {
 	static Map<String, ReducerArray> symTable = new HashMap<String, ReducerArray>();
 
 	/**
@@ -76,7 +76,7 @@ public class Simulator implements ReducerInterface<Double> {
 		case OUTPUT:
 			ReducerArray out = symTable.get(dest);
 			symTable.put("output", out);
-			System.out.println(out.toString());
+			// System.out.println(out.toString());
 			break;
 		case SORT:
 			boolean isDesc = ins.isDesc();
@@ -208,7 +208,6 @@ public class Simulator implements ReducerInterface<Double> {
 		return symTable.get("output");
 	}
 
-	@Override
 	public List<Double> reduce(List<Double> in) {
 		ReducerArray ra = new ReducerArray(in);
 		return reduce(ra).content;

@@ -66,7 +66,7 @@ public class ReducerWrapper {
           targetArray.clear();
         }
         // sum += value;
-        targetArray.add(targetArray.size(), value);
+        targetArray.add(value);
         line = stdin.readLine();
       }
       // print out the last key as well

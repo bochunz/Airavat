@@ -3,7 +3,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-class SumReducer implements ReducerInterface<Double> {
+class SumReducer extends ReducerInterface<Double> {
 	public List<Double> reduce(List<Double> in){
 		List<Double> list = new ArrayList<Double>();
 		Double sum=0.0;
@@ -15,7 +15,7 @@ class SumReducer implements ReducerInterface<Double> {
 	}
 }
 
-class CountReducer implements ReducerInterface<Double>{
+class CountReducer extends ReducerInterface<Double>{
 	public List<Double> reduce(List<Double> in){
 		List<Double> list = new ArrayList<Double>();
 		double count = (double)in.size();
@@ -24,7 +24,7 @@ class CountReducer implements ReducerInterface<Double>{
 	}
 }
 
-class MeanReducer implements ReducerInterface<Double>{
+class MeanReducer extends ReducerInterface<Double>{
 	public List<Double> reduce(List<Double> in){
 		List<Double> list = new ArrayList<Double>();
 		double size = (double)in.size();
@@ -38,7 +38,7 @@ class MeanReducer implements ReducerInterface<Double>{
 	}
 }
 
-class MedianReducer implements ReducerInterface<Double>{
+class MedianReducer extends ReducerInterface<Double>{
 	public List<Double> reduce(List<Double> in){
 		List<Double> list = new ArrayList<Double>();
 		int size = in.size();
@@ -56,7 +56,7 @@ class MedianReducer implements ReducerInterface<Double>{
 	}
 }
 
-class MaxReducer implements ReducerInterface<Double> {
+class MaxReducer extends ReducerInterface<Double> {
   public List<Double> reduce (List<Double> in) {
     double max = in.get(1);
     for (int i = 1; i < in.size(); i++) {
@@ -70,7 +70,7 @@ class MaxReducer implements ReducerInterface<Double> {
   }
 }
 
-class MinReducer implements ReducerInterface<Double> {
+class MinReducer extends ReducerInterface<Double> {
   public List<Double> reduce (List<Double> in) {
     double min = in.get(1);
     for (int i = 1; i < in.size(); i++) {
