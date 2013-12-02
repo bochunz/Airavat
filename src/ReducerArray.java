@@ -3,6 +3,7 @@ import java.util.*;
 public class ReducerArray {
   public List<Double> content = new ArrayList<Double>();
   double epsilon = 0.0;
+  double epsilonPower = 1;
 
   public ReducerArray() {
 	  //default constructor.
@@ -26,12 +27,17 @@ public class ReducerArray {
     for(Double d: ra.content) {
       content.add(d);
     }
+    epsilon = ra.epsilon;
   }
   
   public ReducerArray(double arr[]){
 	  for(double d: arr) {
 		  content.add(d);
 	  }
+  }
+
+  public void setEpsilon(double epsilon) {
+    this.epsilon = epsilon;
   }
   
   public double get(int index) {
@@ -48,11 +54,16 @@ public class ReducerArray {
 
   public static ReducerArray copy(ReducerArray[] in) {
     ReducerArray ret = new ReducerArray();
+    double maxEpsilon = 0;
     for (ReducerArray ra: in) {
       for (double val: ra.content) {
         ret.push(val);
       }
+      if (ra.epsilon > maxEpsilon) {
+        maxEpsilon = ra.epsilon;
+      }
     }
+    ret.epsilon = maxEpsilon;
     return ret;
   }
   
@@ -83,6 +94,7 @@ public class ReducerArray {
       while (pq.size() > 0) {
         ret.push(pq.poll());
       }
+      ret.epsilon = epsilon;
       return ret;
     }
   }
@@ -115,6 +127,7 @@ public class ReducerArray {
       while (pq.size() > 0) {
         ret.push(pq.poll());
       }
+      ret.epsilon = epsilon;
       return ret;
     }
   }
@@ -125,6 +138,7 @@ public class ReducerArray {
 		if(isDesc) {
 			Collections.reverse(ret.content);
 		}
+    ret.epsilon = epsilon;
 		return ret;
 	}
 
@@ -151,10 +165,14 @@ public class ReducerArray {
   public ReducerArray median() {
     ReducerArray sorted = this.sort(false);
     if (sorted.size() % 2 == 1) {
-      return new ReducerArray(sorted.get(sorted.size()/2));
+      ReducerArray ret = new ReducerArray(sorted.get(sorted.size()/2));
+      ret.epsilon = epsilon;
+      return ret;
     } else if (sorted.size() != 0) {
       double val = ((sorted.get(sorted.size()/2)) + (sorted.get(sorted.size()/2-1)))/2;
-      return new ReducerArray(val);
+      ReducerArray ret = new ReducerArray(val);
+      ret.epsilon = epsilon;
+      return ret;
     } else {
       return new ReducerArray();
     }
@@ -176,14 +194,17 @@ public class ReducerArray {
       for (int i = 0; i < this.size(); i++) {
         ret.push(content.get(i) + addend.get(i));
       }
+      ret.epsilon = this.epsilon + addend.epsilon;
     } else if (addend.size() == 1 && this.size() > 0) {
       for (double d: content) {
         ret.push(d + addend.get(0));
       }
+      ret.epsilon = this.epsilon;
     } else if (addend.size() > 0 && this.size() == 1) {
       for (double d: addend.content) {
         ret.push(d + content.get(0));
       }
+      ret.epsilon = addend.epsilon;
     } 
     return ret;
   }
@@ -197,6 +218,7 @@ public class ReducerArray {
     for(double val: content) {
       ret.push(-val);
     }
+    ret.epsilon = epsilon;
     return ret;
   }
 
@@ -215,6 +237,8 @@ public class ReducerArray {
       if (val == 0) return empty;
       ret.push(1/val);
     }
+    if (epsilon == 0) ret.epsilon = 0;
+    else ret.epsilon = 1/epsilon;
     return ret;
   }
 
@@ -224,14 +248,17 @@ public class ReducerArray {
       for (int i = 0; i < this.size(); i++) {
         ret.push(content.get(i) * multiplier.get(i));
       }
+      ret.epsilon = this.epsilon * multiplier.epsilon;
     } else if (multiplier.size() == 1 && this.size() > 0) {
       for (double d: content) {
         ret.push(d * multiplier.get(0));
       }
+      ret.epsilon = this.epsilon * multiplier.get(0);
     } else if (multiplier.size() > 0 && this.size() == 1) {
       for (double d: multiplier.content) {
         ret.push(d * content.get(0));
       }
+      ret.epsilon = this.get(0) * multiplier.epsilon;
     } 
     return ret;
   }
@@ -262,6 +289,7 @@ public class ReducerArray {
         ret.push(-val);
       }
     }
+    ret.epsilon = epsilon;
     return ret;
   }
 
@@ -303,14 +331,17 @@ public class ReducerArray {
 
       if (sat) ret.push(val);
     }
+    ret.epsilon = epsilon;
     return ret;
   }
 
   public ReducerArray power(double p) {
-    ReducerArray result = new ReducerArray();
+    ReducerArray ret = new ReducerArray();
     for(Double d: content) {
-      result.push(Math.pow(d, p));
+      ret.push(Math.pow(d, p));
     }
-    return result;
+    ret.epsilon = epsilon;
+    ret.epsilonPower *= p;
+    return ret;
   }
 }
